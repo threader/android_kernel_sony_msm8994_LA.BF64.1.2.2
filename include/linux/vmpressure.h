@@ -13,7 +13,8 @@ struct vmpressure {
 	unsigned long reclaimed;
 	unsigned long stall;
 	/* The lock is used to keep the scanned/reclaimed above in sync. */
-	struct spinlock sr_lock;
+	struct mutex sr_lock;
+>>>>>>> 70ddf637eebe (memcg: add memory.pressure_level events)
 
 	/* The list of vmpressure_event structs. */
 	struct list_head events;
@@ -47,5 +48,9 @@ static inline struct vmpressure *memcg_to_vmpressure(struct mem_cgroup *memcg)
 {
 	return NULL;
 }
+static inline void vmpressure(gfp_t gfp, struct mem_cgroup *memcg,
+			      unsigned long scanned, unsigned long reclaimed) {}
+static inline void vmpressure_prio(gfp_t gfp, struct mem_cgroup *memcg,
+				   int prio) {}
 #endif /* CONFIG_MEMCG */
 #endif /* __LINUX_VMPRESSURE_H */

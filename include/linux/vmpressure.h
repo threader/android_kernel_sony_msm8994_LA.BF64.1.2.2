@@ -13,8 +13,7 @@ struct vmpressure {
 	unsigned long reclaimed;
 	unsigned long stall;
 	/* The lock is used to keep the scanned/reclaimed above in sync. */
-	struct mutex sr_lock;
->>>>>>> 70ddf637eebe (memcg: add memory.pressure_level events)
+	struct spinlock sr_lock;
 
 	/* The list of vmpressure_event structs. */
 	struct list_head events;

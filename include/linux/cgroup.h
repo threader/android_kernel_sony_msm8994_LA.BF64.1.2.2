@@ -65,11 +65,7 @@ enum cgroup_subsys_id {
 
 /* Per-subsystem/per-cgroup state maintained by the system. */
 struct cgroup_subsys_state {
-	/*
-	 * The cgroup that this subsystem is attached to. Useful
-	 * for subsystems that want to know about the cgroup
-	 * hierarchy structure
-	 */
+	/* the cgroup that this css is attached to */
 	struct cgroup *cgroup;
 
 	/*
@@ -79,6 +75,8 @@ struct cgroup_subsys_state {
 	 */
 
 	atomic_t refcnt;
+	/* the cgroup subsystem that this css is attached to */
+	struct cgroup_subsys *ss;
 
 	unsigned long flags;
 	/* ID for this css, if possible */

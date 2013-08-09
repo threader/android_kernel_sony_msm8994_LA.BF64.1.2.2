@@ -4130,6 +4130,7 @@ static void init_cgroup_css(struct cgroup_subsys_state *css,
 {
 	css->cgroup = cgrp;
 	atomic_set(&css->refcnt, 1);
+	css->ss = ss;
 	css->flags = 0;
 	css->id = NULL;
 	if (cgrp == dummytop)

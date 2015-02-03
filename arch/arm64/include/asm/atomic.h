@@ -30,6 +30,8 @@
 
 #ifdef __KERNEL__
 
+#include <asm/atomic_ll_sc.h>
+
 /*
  * On ARM, ordinary assignment (str instruction) doesn't clear the local
  * strex/ldrex monitor on some implementations. The reason we can use it for
@@ -129,6 +131,8 @@ static inline int atomic_cmpxchg(atomic_t *ptr, int old, int new)
 	return oldval;
 }
 
+=======
+>>>>>>> c275f76bb4ce1 (arm64: atomics: move ll/sc atomics into separate header file)
 #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
 
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)
@@ -152,6 +156,8 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 
 #define atomic_add_negative(i,v) (atomic_add_return(i, v) < 0)
 
+#define atomic_andnot atomic_andnot
+
 /*
  * 64-bit atomic operations.
  */
@@ -159,114 +165,7 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 
 #define atomic64_read(v)	(*(volatile long *)&(v)->counter)
 #define atomic64_set(v,i)	(((v)->counter) = (i))
-
-static inline void atomic64_add(u64 i, atomic64_t *v)
-{
-	long result;
-	unsigned long tmp;
-
-	asm volatile("// atomic64_add\n"
-"1:	ldxr	%0, %2\n"
-"	add	%0, %0, %3\n"
-"	stxr	%w1, %0, %2\n"
-"	cbnz	%w1, 1b"
-	: "=&r" (result), "=&r" (tmp), "+Q" (v->counter)
-	: "Ir" (i));
-}
-
-static inline long atomic64_add_return(long i, atomic64_t *v)
-{
-	long result;
-	unsigned long tmp;
-
-	asm volatile("// atomic64_add_return\n"
-"1:	ldxr	%0, %2\n"
-"	add	%0, %0, %3\n"
-"	stlxr	%w1, %0, %2\n"
-"	cbnz	%w1, 1b"
-	: "=&r" (result), "=&r" (tmp), "+Q" (v->counter)
-	: "Ir" (i)
-	: "memory");
-
-	smp_mb();
-	return result;
-}
-
-static inline void atomic64_sub(u64 i, atomic64_t *v)
-{
-	long result;
-	unsigned long tmp;
-
-	asm volatile("// atomic64_sub\n"
-"1:	ldxr	%0, %2\n"
-"	sub	%0, %0, %3\n"
-"	stxr	%w1, %0, %2\n"
-"	cbnz	%w1, 1b"
-	: "=&r" (result), "=&r" (tmp), "+Q" (v->counter)
-	: "Ir" (i));
-}
-
-static inline long atomic64_sub_return(long i, atomic64_t *v)
-{
-	long result;
-	unsigned long tmp;
-
-	asm volatile("// atomic64_sub_return\n"
-"1:	ldxr	%0, %2\n"
-"	sub	%0, %0, %3\n"
-"	stlxr	%w1, %0, %2\n"
-"	cbnz	%w1, 1b"
-	: "=&r" (result), "=&r" (tmp), "+Q" (v->counter)
-	: "Ir" (i)
-	: "memory");
-
-	smp_mb();
-	return result;
-}
-
-static inline long atomic64_cmpxchg(atomic64_t *ptr, long old, long new)
-{
-	long oldval;
-	unsigned long res;
-
-	smp_mb();
-
-	asm volatile("// atomic64_cmpxchg\n"
-"1:	ldxr	%1, %2\n"
-"	cmp	%1, %3\n"
-"	b.ne	2f\n"
-"	stxr	%w0, %4, %2\n"
-"	cbnz	%w0, 1b\n"
-"2:"
-	: "=&r" (res), "=&r" (oldval), "+Q" (ptr->counter)
-	: "Ir" (old), "r" (new)
-	: "cc");
-
-	smp_mb();
-	return oldval;
-}
-
 #define atomic64_xchg(v, new) (xchg(&((v)->counter), new))
-
-static inline long atomic64_dec_if_positive(atomic64_t *v)
-{
-	long result;
-	unsigned long tmp;
-
-	asm volatile("// atomic64_dec_if_positive\n"
-"1:	ldxr	%0, %2\n"
-"	subs	%0, %0, #1\n"
-"	b.mi	2f\n"
-"	stlxr	%w1, %0, %2\n"
-"	cbnz	%w1, 1b\n"
-"	dmb	ish\n"
-"2:"
-	: "=&r" (result), "=&r" (tmp), "+Q" (v->counter)
-	:
-	: "cc", "memory");
-
-	return result;
-}
 
 static inline int atomic64_add_unless(atomic64_t *v, long a, long u)
 {
@@ -288,6 +187,8 @@ static inline int atomic64_add_unless(atomic64_t *v, long a, long u)
 #define atomic64_dec_return(v)		atomic64_sub_return(1LL, (v))
 #define atomic64_dec_and_test(v)	(atomic64_dec_return((v)) == 0)
 #define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1LL, 0LL)
+
+#define atomic64_andnot atomic64_andnot
 
 #endif
 #endif

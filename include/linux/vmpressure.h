@@ -48,9 +48,5 @@ static inline struct vmpressure *memcg_to_vmpressure(struct mem_cgroup *memcg)
 {
 	return NULL;
 }
-static inline void vmpressure(gfp_t gfp, struct mem_cgroup *memcg,
-			      unsigned long scanned, unsigned long reclaimed) {}
-static inline void vmpressure_prio(gfp_t gfp, struct mem_cgroup *memcg,
-				   int prio) {}
 #endif /* CONFIG_MEMCG */
 #endif /* __LINUX_VMPRESSURE_H */

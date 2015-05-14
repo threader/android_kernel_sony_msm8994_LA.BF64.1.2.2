@@ -136,6 +136,35 @@ static inline unsigned long __cmpxchg_mb(volatile void *ptr, unsigned long old,
 	__ret; \
 })
 
+#define system_has_cmpxchg_double()     1
+
+#define __cmpxchg_double_check(ptr1, ptr2)					\
+({										\
+	if (sizeof(*(ptr1)) != 8)						\
+		BUILD_BUG();							\
+	VM_BUG_ON((unsigned long *)(ptr2) - (unsigned long *)(ptr1) != 1);	\
+})
+
+#define cmpxchg_double(ptr1, ptr2, o1, o2, n1, n2) \
+({\
+	int __ret;\
+	__cmpxchg_double_check(ptr1, ptr2); \
+	__ret = !__cmpxchg_double_mb((unsigned long)(o1), (unsigned long)(o2), \
+				     (unsigned long)(n1), (unsigned long)(n2), \
+				     ptr1); \
+	__ret; \
+})
+
+#define cmpxchg_double_local(ptr1, ptr2, o1, o2, n1, n2) \
+({\
+	int __ret;\
+	__cmpxchg_double_check(ptr1, ptr2); \
+	__ret = !__cmpxchg_double((unsigned long)(o1), (unsigned long)(o2), \
+				  (unsigned long)(n1), (unsigned long)(n2), \
+				  ptr1); \
+	__ret; \
+})
+
 #define cmpxchg64(ptr,o,n)		cmpxchg((ptr),(o),(n))
 #define cmpxchg64_local(ptr,o,n)	cmpxchg_local((ptr),(o),(n))
 

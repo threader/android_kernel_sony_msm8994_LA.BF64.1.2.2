@@ -153,7 +153,7 @@ __LL_SC_INLINE long__LL_SC_PREFIX(atomic64_dec_if_positive(atomic64_t *v))
 	asm volatile("// atomic64_dec_if_positive\n"
 "1:	ldxr	%0, %2\n"
 "	subs	%0, %0, #1\n"
-"	b.mi	2f\n"
+"	b.lt	2f\n"
 "	stlxr	%w1, %0, %2\n"
 "	cbnz	%w1, 1b\n"
 "	dmb	ish\n"

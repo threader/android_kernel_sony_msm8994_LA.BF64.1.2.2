@@ -196,7 +196,7 @@ __LL_SC_PREFIX(__cmpxchg_case_##name(volatile void *ptr,		\
 	"1:	ld" #acq "xr" #sz "\t%" #w "[oldval], %[v]\n"		\
 	"	eor	%" #w "[tmp], %" #w "[oldval], %" #w "[old]\n"	\
 	"	cbnz	%" #w "[tmp], 2f\n"				\
-	"	stxr" #sz "\t%w[tmp], %" #w "[new], %[v]\n"		\
+	"	st" #rel "xr" #sz "\t%w[tmp], %" #w "[new], %[v]\n"	\
 	"	cbnz	%w[tmp], 1b\n"					\
 	"	" #mb "\n"						\
 	"	mov	%" #w "[oldval], %" #w "[old]\n"		\
@@ -230,6 +230,7 @@ __CMPXCHG_CASE( ,  ,  mb_8, dmb ish,  , l, "memory")
 #undef __CMPXCHG_CASE
 
 #define __CMPXCHG_DBL(name, mb, rel, cl)				\
+<<<<<<< HEAD
 __LL_SC_INLINE long							\
 __LL_SC_PREFIX(__cmpxchg_double##name(unsigned long old1,		\
 				      unsigned long old2,		\
@@ -240,13 +241,12 @@ __LL_SC_PREFIX(__cmpxchg_double##name(unsigned long old1,		\
 	unsigned long tmp, ret;						\
 									\
 	asm volatile("// __cmpxchg_double" #name "\n"			\
-	"	" #mb "\n"						\
 	"1:	ldxp	%0, %1, %2\n"					\
 	"	eor	%0, %0, %3\n"					\
 	"	eor	%1, %1, %4\n"					\
 	"	orr	%1, %0, %1\n"					\
 	"	cbnz	%1, 2f\n"					\
-	"	stxp	%w0, %5, %6, %2\n"				\
+	"	st" #rel "xp	%w0, %5, %6, %2\n"			\
 	"	cbnz	%w0, 1b\n"					\
 	"	" #mb "\n"						\
 	"2:"								\
@@ -258,8 +258,8 @@ __LL_SC_PREFIX(__cmpxchg_double##name(unsigned long old1,		\
 }									\
 __LL_SC_EXPORT(__cmpxchg_double##name);
 
-__CMPXCHG_DBL(   ,        ,         )
-__CMPXCHG_DBL(_mb, dmb ish, "memory")
+__CMPXCHG_DBL(   ,        ,  ,         )
+__CMPXCHG_DBL(_mb, dmb ish, l, "memory")
 
 #undef __CMPXCHG_DBL
 

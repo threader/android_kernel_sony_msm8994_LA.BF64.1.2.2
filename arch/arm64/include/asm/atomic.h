@@ -119,6 +119,7 @@ static inline int atomic_sub_return(int i, atomic_t *v)
 	return result;
 }
 
+<<<<<<< HEAD
 static inline int atomic_cmpxchg(atomic_t *ptr, int old, int new)
 {
 	unsigned long tmp;
@@ -165,6 +166,7 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 #define atomic_add_negative(i,v) (atomic_add_return(i, v) < 0)
 
 #define atomic_andnot atomic_andnot
+#define atomic_cmpxchg(v, old, new)	cmpxchg(&((v)->counter), (old), (new))
 
 /*
  * 64-bit atomic operations.
@@ -189,6 +191,7 @@ static inline int atomic64_add_unless(atomic64_t *v, long a, long u)
 #define atomic64_add_negative(a, v)	(atomic64_add_return((a), (v)) < 0)
 #define atomic64_inc(v)			atomic64_add(1LL, (v))
 #define atomic64_inc_return(v)		atomic64_add_return(1LL, (v))
+#define atomic64_cmpxchg		atomic_cmpxchg
 #define atomic64_inc_and_test(v)	(atomic64_inc_return(v) == 0)
 #define atomic64_sub_and_test(a, v)	(atomic64_sub_return((a), (v)) == 0)
 #define atomic64_dec(v)			atomic64_sub(1LL, (v))

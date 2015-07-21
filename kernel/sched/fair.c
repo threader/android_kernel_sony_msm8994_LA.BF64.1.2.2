@@ -7672,7 +7672,7 @@ no_move:
 				stop_one_cpu_nowait(cpu_of(busiest),
 					active_load_balance_cpu_stop, busiest,
 					&busiest->active_balance_work);
-				ld_moved++;
+				*balance = 0;
 			}
 
 			/*
@@ -7811,9 +7811,12 @@ void idle_balance(struct rq *this_rq)
 
 		/*
 		 * Stop searching for tasks to pull if there are
-		 * now runnable tasks on this rq.
+		 * now runnable tasks on this rq or if
+		 * balance has been unset (only possible
+		 * due to active migration).
 		 */
-		if (pulled_task || this_rq->nr_running > 0) {
+		if (pulled_task || this_rq->nr_running > 0 ||
+						!balance) {
 			balance_rq->idle_stamp = 0;
 			break;
 		}

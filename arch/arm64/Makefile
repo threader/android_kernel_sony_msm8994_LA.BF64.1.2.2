@@ -47,6 +47,14 @@ comma = ,
 
 CHECKFLAGS	+= -D__aarch64__
 
+ifeq ($(CONFIG_ARM64_MODULE_CMODEL_LARGE), y)
+KBUILD_CFLAGS_MODULE	+= -mcmodel=large
+endif
+
+ifeq ($(CONFIG_ARM64_MODULE_PLTS),y)
+KBUILD_LDFLAGS_MODULE	+= -T $(srctree)/arch/arm64/kernel/module.lds
+endif
+
 # Default value
 head-y		:= arch/arm64/kernel/head.o
 

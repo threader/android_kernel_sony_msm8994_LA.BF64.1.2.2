@@ -445,6 +445,7 @@ config ARM64_ERRATUM_845719
 
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config ARM64_A57_ERRATA_832075
 	bool "ARMv8 A57 Errata 832075"
 	help
@@ -468,6 +469,23 @@ config ARM64_SEV_IN_LOCK_UNLOCK
 	  Add an explicity dsb and SEV in write_unlock, read_unlock
 	  and spin_unlock to ensure that the core waiting on the lock
 	  wakes up from WFE.
+
+config ARM64_ERRATUM_843419
+	bool "Cortex-A53: 843419: A load or store might access an incorrect address"
+	depends on MODULES
+	default y
+	select ARM64_MODULE_CMODEL_LARGE
+	help
+	  This option builds kernel modules using the large memory model in
+	  order to avoid the use of the ADRP instruction, which can cause
+	  a subsequent memory access to use an incorrect address on Cortex-A53
+	  parts up to r0p4.
+
+	  Note that the kernel itself must be linked with a version of ld
+	  which fixes potentially affected ADRP instructions through the
+	  use of veneers.
+
+	  If unsure, say Y.
 
 config SMP
 	bool "Symmetric Multi-Processing"
@@ -672,6 +690,14 @@ config ARM64_LSE_ATOMICS
 	  not support these instructions and requires the kernel to be
 	  built with binutils >= 2.25.
 
+
+config ARM64_MODULE_CMODEL_LARGE
+	bool
+
+config ARM64_MODULE_PLTS
+	bool
+	select ARM64_MODULE_CMODEL_LARGE
+	select HAVE_MOD_ARCH_SPECIFIC
 
 endmenu
 

@@ -497,4 +497,14 @@ void cpufreq_task_stats_remove_uids(uid_t uid_start, uid_t uid_end);
 int  proc_time_in_state_show(struct seq_file *m, struct pid_namespace *ns,
 	struct pid *pid, struct task_struct *p);
 
+#ifdef CONFIG_TASK_CPUFREQ_STATS
+void update_time_in_state(struct task_struct *p, int cpu);
+void update_cumulative_time_in_state(struct task_struct *p,
+				     struct task_struct *parent,
+				     int cpu);
+int cpufreq_stats_get_max_state(int cpu);
+void update_freq_table(unsigned int* freq_table, int cpu,
+		       unsigned int max_state);
+#endif
+
 #endif /* _LINUX_CPUFREQ_H */

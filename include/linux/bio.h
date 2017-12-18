@@ -170,6 +170,29 @@ static inline void *bio_data(struct bio *bio)
  */
 #define bio_get(bio)	atomic_inc(&(bio)->bi_cnt)
 
+static inline unsigned bio_pages_all(struct bio *bio)
+{
+	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+	return bio->bi_vcnt;
+}
+
+static inline struct bio_vec *bio_first_bvec_all(struct bio *bio)
+{
+	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+	return bio->bi_io_vec;
+}
+
+static inline struct page *bio_first_page_all(struct bio *bio)
+{
+	return bio_first_bvec_all(bio)->bv_page;
+}
+
+static inline struct bio_vec *bio_last_bvec_all(struct bio *bio)
+{
+	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+	return &bio->bi_io_vec[bio->bi_vcnt - 1];
+}
+
 #if defined(CONFIG_BLK_DEV_INTEGRITY)
 /*
  * bio integrity payload

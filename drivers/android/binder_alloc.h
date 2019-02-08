@@ -40,8 +40,12 @@ struct binder_transaction;
  * @data_size:          size of @transaction data
  * @offsets_size:       size of array of offsets
  * @extra_buffers_size: size of space for other objects (like sg lists)
+<<<<<<< HEAD
  * @data:               pointer to base of buffer space
  * @pid:                pid to attribute the buffer to (caller)
+=======
+ * @user_data:          user pointer to base of buffer space
+>>>>>>> 8539b1ea7f63 (BACKPORT: binder: use userspace pointer as base of buffer space)
  *
  * Bookkeeping structure for binder transaction buffers
  */
@@ -60,8 +64,12 @@ struct binder_buffer {
 	size_t data_size;
 	size_t offsets_size;
 	size_t extra_buffers_size;
+<<<<<<< HEAD
 	void *data;
 	int    pid;
+=======
+	void __user *user_data;
+>>>>>>> 8539b1ea7f63 (BACKPORT: binder: use userspace pointer as base of buffer space)
 };
 
 /**
@@ -105,8 +113,7 @@ struct binder_alloc {
 	struct mutex mutex;
 	struct vm_area_struct *vma;
 	struct mm_struct *vma_vm_mm;
-	void *buffer;
-	ptrdiff_t user_buffer_offset;
+	void __user *buffer;
 	struct list_head buffers;
 	struct rb_root free_buffers;
 	struct rb_root allocated_buffers;

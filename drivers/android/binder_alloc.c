@@ -396,7 +396,8 @@ static void debug_low_async_space_locked(struct binder_alloc *alloc, int pid)
 	 * async space (which is 25% of total buffer size).
 	 */
 	if (num_buffers > 50 || total_alloc_size > alloc->buffer_size / 4) {
-		pr_err("%d: pid %d spamming oneway? %zd buffers allocated for a total size of %zd\n",
+		binder_alloc_debug(BINDER_DEBUG_USER_ERROR,
+			     "%d: pid %d spamming oneway? %zd buffers allocated for a total size of %zd\n",
 			      alloc->pid, pid, num_buffers, total_alloc_size);
 	}
 }

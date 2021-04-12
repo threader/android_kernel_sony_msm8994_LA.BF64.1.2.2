@@ -110,6 +110,9 @@ enum pageflags {
 	PG_compound_lock,
 #endif
 	PG_readahead,		/* page in a readahead window */
+#ifdef CONFIG_ZCACHE
+	PG_was_active,
+#endif
 	__NR_PAGEFLAGS,
 
 	/* Filesystems */

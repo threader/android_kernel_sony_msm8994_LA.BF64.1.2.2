@@ -499,6 +499,7 @@ void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 		put_task_struct(p);
 		return;
 	}
+	task_unlock(p);
 
 	if (__ratelimit(&oom_rs))
 		dump_header(p, gfp_mask, order, memcg, nodemask);

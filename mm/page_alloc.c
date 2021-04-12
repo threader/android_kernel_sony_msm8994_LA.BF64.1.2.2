@@ -4349,12 +4349,13 @@ static int __meminit zone_batchsize(struct zone *zone)
 
 	/*
 	 * The per-cpu-pages pools are set to around 1000th of the
-	 * size of the zone.
+	 * size of the zone.  But no more than 1/2 of a meg.
+	 *
+	 * OK, so we don't know how big the cache is.  So guess.
 	 */
 	batch = zone->managed_pages / 1024;
-	/* But no more than a meg. */
-	if (batch * PAGE_SIZE > 1024 * 1024)
-		batch = (1024 * 1024) / PAGE_SIZE;
+	if (batch * PAGE_SIZE > 512 * 1024)
+		batch = (512 * 1024) / PAGE_SIZE;
 	batch /= 4;		/* We effectively *= 4 below */
 	if (batch < 1)
 		batch = 1;
@@ -6679,6 +6680,9 @@ static const struct trace_print_flags pageflag_names[] = {
 	{1UL << PG_compound_lock,	"compound_lock"	},
 #endif
 	{1UL << PG_readahead,           "PG_readahead"  },
+#ifdef CONFIG_ZCACHE
+	{1UL << PG_was_active,		"was_active"	},
+#endif
 };
 
 static void dump_page_flags(unsigned long flags)

@@ -161,7 +161,8 @@ ATOMIC64_OP(xor, eor)
 #undef ATOMIC64_OP_RETURN
 #undef ATOMIC64_OP
 
-__LL_SC_INLINE long__LL_SC_PREFIX(atomic64_dec_if_positive(atomic64_t *v))
+__LL_SC_INLINE long
+__LL_SC_PREFIX(atomic64_dec_if_positive(atomic64_t *v))
 {
 	long result;
 	unsigned long tmp;

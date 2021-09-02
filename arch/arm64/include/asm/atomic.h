@@ -141,8 +141,6 @@ static inline int atomic_cmpxchg(atomic_t *ptr, int old, int new)
 	return oldval;
 }
 
-=======
->>>>>>> c275f76bb4ce1 (arm64: atomics: move ll/sc atomics into separate header file)
 #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
 
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)

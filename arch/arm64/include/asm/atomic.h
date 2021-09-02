@@ -49,7 +49,7 @@
  */
 #define atomic_read(v)	(*(volatile int *)&(v)->counter)
 #define atomic_set(v,i)	(((v)->counter) = (i))
-
+#if 0
 /*
  * AArch64 UP and SMP safe atomic ops.  We use load exclusive and
  * store exclusive to ensure that these are atomic.  We may loop
@@ -140,7 +140,7 @@ static inline int atomic_cmpxchg(atomic_t *ptr, int old, int new)
 	smp_mb();
 	return oldval;
 }
-
+#endif
 #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
 
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)

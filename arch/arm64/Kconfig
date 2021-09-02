@@ -445,7 +445,6 @@ config ARM64_ERRATUM_845719
 
 	  If unsure, say Y.
 
-<<<<<<< HEAD
 config ARM64_A57_ERRATA_832075
 	bool "ARMv8 A57 Errata 832075"
 	help

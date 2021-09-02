@@ -230,7 +230,6 @@ __CMPXCHG_CASE( ,  ,  mb_8, dmb ish,  , l, "memory")
 #undef __CMPXCHG_CASE
 
 #define __CMPXCHG_DBL(name, mb, rel, cl)				\
-<<<<<<< HEAD
 __LL_SC_INLINE long							\
 __LL_SC_PREFIX(__cmpxchg_double##name(unsigned long old1,		\
 				      unsigned long old2,		\

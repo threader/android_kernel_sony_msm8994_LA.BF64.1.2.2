@@ -197,6 +197,7 @@ static inline int atomic_dec_if_positive(atomic_t *v)
 #endif
 
 #ifndef CONFIG_ARCH_HAS_ATOMIC_OR
+#if 0
 static inline void atomic_or(int i, atomic_t *v)
 {
 	int old;
@@ -207,6 +208,7 @@ static inline void atomic_or(int i, atomic_t *v)
 		new = old | i;
 	} while (atomic_cmpxchg(v, old, new) != old);
 }
+#endif
 #endif /* #ifndef CONFIG_ARCH_HAS_ATOMIC_OR */
 
 #include <asm-generic/atomic-long.h>

@@ -17,6 +17,7 @@
 
 #include <linux/bug.h>
 #include <linux/atomic.h>
+#include <asm/atomic.h>
 #include <linux/kernel.h>
 #include <linux/mutex.h>
 #include <linux/spinlock.h>

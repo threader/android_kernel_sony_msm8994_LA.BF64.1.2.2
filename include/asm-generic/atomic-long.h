@@ -9,7 +9,7 @@
  */
 
 #include <asm/types.h>
-
+#include <asm/atomic.h> 
 /*
  * Suppport for atomic_long_t
  *

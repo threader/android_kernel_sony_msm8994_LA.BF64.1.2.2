@@ -24,35 +24,6 @@ struct ahash_request;
 #include <linux/kasan-checks.h>
 #include <linux/kcsan-checks.h>
 
-#ifndef arch_cmpxchg_relaxed
-#define arch_cmpxchg_acquire arch_cmpxchg
-#define arch_cmpxchg_release arch_cmpxchg
-#define arch_cmpxchg_relaxed arch_cmpxchg
-#else /* arch_cmpxchg_relaxed */
-
-#ifndef arch_cmpxchg_acquire
-#define arch_cmpxchg_acquire(...) \
-	__atomic_op_acquire(arch_cmpxchg, __VA_ARGS__)
-#endif
-
-#ifndef arch_cmpxchg_release
-#define arch_cmpxchg_release(...) \
-	__atomic_op_release(arch_cmpxchg, __VA_ARGS__)
-#endif
-
-#ifndef arch_cmpxchg
-#define arch_cmpxchg(...) \
-	__atomic_op_fence(arch_cmpxchg, __VA_ARGS__)
-#endif
-
-#endif /* arch_cmpxchg_relaxed */
-
-#define cmpxchg_release(ptr, ...) \
-({ \
-	typeof(ptr) __ai_ptr = (ptr); \
-	instrument_atomic_write(__ai_ptr, sizeof(*__ai_ptr)); \
-	arch_cmpxchg_release(__ai_ptr, __VA_ARGS__); \
-})
 
 /**
  * instrument_atomic_write - instrument atomic write access

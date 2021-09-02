@@ -26,8 +26,6 @@
 #include <asm/barrier.h>
 #include <asm/lse.h>
 
-#define ATOMIC_INIT(i)	{ (i) }
-
 #ifdef __KERNEL__
 
 #define __ARM64_IN_ATOMIC_IMPL
@@ -42,27 +40,10 @@
 
 #include <asm/cmpxchg.h>
 
-/*
- * On ARM, ordinary assignment (str instruction) doesn't clear the local
- * strex/ldrex monitor on some implementations. The reason we can use it for
- * atomic_set() is the clrex or dummy strex done on every exception return.
- */
-#define atomic_read(v)	(*(volatile int *)&(v)->counter)
-#define atomic_set(v,i)	(((v)->counter) = (i))
-#define atomic_xchg(v, new) (xchg(&((v)->counter), new))
-
-static inline int __atomic_add_unless(atomic_t *v, int a, int u)
-{
-	int c, old;
-
-	c = atomic_read(v);
-	while (c != u && (old = atomic_cmpxchg((v), c, c + a)) != c)
-		c = old;
-	return c;
-}
+#define ATOMIC_INIT(i)	{ (i) }
 
 #define atomic_read(v)			READ_ONCE((v)->counter)
-#define atomic_set(v, i)		(((v)->counter) = (i))
+#define atomic_set(v, i)		WRITE_ONCE(((v)->counter), (i))
 
 #define atomic_add_return_relaxed	atomic_add_return_relaxed
 #define atomic_add_return_acquire	atomic_add_return_acquire
@@ -96,8 +77,26 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 #define atomic_cmpxchg_release(v, old, new)				\
 	cmpxchg_release(&((v)->counter), (old), (new))
 #define atomic_cmpxchg(v, old, new)	cmpxchg(&((v)->counter), (old), (new))
+/*
+ * On ARM, ordinary assignment (str instruction) doesn't clear the local
+ * strex/ldrex monitor on some implementations. The reason we can use it for
+ * atomic_set() is the clrex or dummy strex done on every exception return.
+ */
 
+static inline int __atomic_add_unless(atomic_t *v, int a, int u)
+{
+	int c, old;
 
+	c = atomic_read(v);
+	while (c != u && (old = atomic_cmpxchg((v), c, c + a)) != c)
+		c = old;
+	return c;
+}
+
+#define atomic_inc(v)		atomic_add(1, v)
+#define atomic_dec(v)		atomic_sub(1, v)
+#define atomic_dec_and_test(v)	(atomic_sub_return(1, v) == 0)
+#define atomic_sub_and_test(i, v) (atomic_sub_return(i, v) == 0)
 /*
  * 64-bit atomic operations.
  */
@@ -105,23 +104,14 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 
 #define atomic64_read(v)	(*(volatile long *)&(v)->counter)
 #define atomic64_set(v,i)	(((v)->counter) = (i))
-#define atomic64_xchg(v, new) (xchg(&((v)->counter), new))
+//#define atomic64_xchg(v, new) (xchg(&((v)->counter), new))
 
-static inline int atomic64_add_unless(atomic64_t *v, long a, long u)
-{
-	long c, old;
 
-	c = atomic64_read(v);
-	while (c != u && (old = atomic64_cmpxchg((v), c, c + a)) != c)
-		c = old;
-
-	return c != u;
-}
 
 #define atomic64_add_negative(a, v)	(atomic64_add_return((a), (v)) < 0)
 #define atomic64_inc(v)			atomic64_add(1LL, (v))
-#define atomic64_inc_return(v)		atomic64_add_return(1LL, (v))
-#define atomic64_cmpxchg		atomic_cmpxchg
+//#define atomic64_inc_return(v)		atomic64_add_return(1LL, (v))
+//#define atomic64_cmpxchg		atomic_cmpxchg
 
 #define atomic64_add_return_relaxed	atomic64_add_return_relaxed
 #define atomic64_add_return_acquire	atomic64_add_return_acquire
@@ -153,13 +143,25 @@ static inline int atomic64_add_unless(atomic64_t *v, long a, long u)
 #define atomic64_cmpxchg_release	atomic_cmpxchg_release
 #define atomic64_cmpxchg		atomic_cmpxchg
 
+static inline int atomic64_add_unless(atomic64_t *v, long a, long u)
+{
+	long c, old;
+
+	c = atomic64_read(v);
+	while (c != u && (old = atomic64_cmpxchg((v), c, c + a)) != c)
+		c = old;
+
+	return c != u;
+}
 #define atomic64_inc_and_test(v)	(atomic64_inc_return(v) == 0)
 #define atomic64_sub_and_test(a, v)	(atomic64_sub_return((a), (v)) == 0)
 #define atomic64_dec(v)			atomic64_sub(1LL, (v))
-#define atomic64_dec_return(v)		atomic64_sub_return(1LL, (v))
 #define atomic64_dec_and_test(v)	(atomic64_dec_return((v)) == 0)
-#define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1LL, 0LL)
 
+#if 0 
+#define atomic64_dec_return(v)		atomic64_sub_return(1LL, (v))
+#define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1LL, 0LL)
+#endif 
 #define atomic64_andnot atomic64_andnot
 
 #endif

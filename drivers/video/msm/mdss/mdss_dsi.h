@@ -638,14 +638,6 @@ int mdss_dsi_panel_disp_en(struct mdss_panel_data *pdata, int enable);
 int mdss_dsi_panel_poll_init(struct mdss_dsi_ctrl_pdata *ctrl_pdata);
 #endif	/* CONFIG_FB_MSM_MDSS_SPECIFIC_PANEL */
 
-int mdss_dsi_pinctrl_set_state(struct mdss_dsi_ctrl_pdata *ctrl_pdata,
-					bool active);
-
-#ifdef CONFIG_FB_MSM_MDSS_SPECIFIC_PANEL
-int mdss_dsi_panel_disp_en(struct mdss_panel_data *pdata, int enable);
-int mdss_dsi_panel_poll_init(struct mdss_dsi_ctrl_pdata *ctrl_pdata);
-#endif	/* CONFIG_FB_MSM_MDSS_SPECIFIC_PANEL */
-
 static inline const char *__mdss_dsi_pm_name(enum dsi_pm_type module)
 {
 	switch (module) {

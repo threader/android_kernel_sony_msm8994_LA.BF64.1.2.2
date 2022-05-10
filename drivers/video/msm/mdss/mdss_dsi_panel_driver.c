@@ -34,7 +34,6 @@
 
 #include "mdss_mdp.h"
 #include "mdss_dsi.h"
-#include "mdss_livedisplay.h"
 
 #include <linux/display_state.h>
 
@@ -2857,22 +2856,19 @@ static int mdss_dsi_panel_parse_display_timings(struct device_node *np,
 
 	timings_np = of_get_child_by_name(np, "qcom,mdss-dsi-display-timings");
 	if (!timings_np) {
-		struct dsi_panel_timing *pt;
-
-		pt = kzalloc(sizeof(*pt), GFP_KERNEL);
-		if (!pt)
-			return -ENOMEM;
+		struct dsi_panel_timing pt;
+		memset(&pt, 0, sizeof(struct dsi_panel_timing));
 
 		/*
 		 * display timings node is not available, fallback to reading
 		 * timings directly from root node instead
 		 */
 		pr_debug("reading display-timings from panel node\n");
-		rc = mdss_dsi_panel_timing_from_dt(np, pt);
+		rc = mdss_dsi_panel_timing_from_dt(np, &pt);
 		if (!rc) {
 			mdss_dsi_panel_config_res_properties(np,
-				panel_data->panel_info.sim_panel_mode, pt);
-			rc = mdss_dsi_panel_timing_switch(ctrl, &pt->timing);
+				panel_data->panel_info.sim_panel_mode, &pt);
+			rc = mdss_dsi_panel_timing_switch(ctrl, &pt.timing);
 		} else {
 			kfree(pt);
 		}
@@ -3486,8 +3482,6 @@ static int mdss_panel_parse_dt(struct device_node *np,
 		rc = of_property_read_u32(np, "somc,poll-esd-reg-val", &tmp);
 		spec_pdata->polling.esd.correct_val = (!rc ? tmp : 0x9C);
 	}
-
-	mdss_livedisplay_parse_dt(np, pinfo);
 
 	return 0;
 

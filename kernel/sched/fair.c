@@ -35,9 +35,8 @@
 #include <linux/migrate.h>
 #include <linux/task_work.h>
 
-#include <trace/events/sched.h>
-
 #include "sched.h"
+#include <trace/events/sched.h>
 
 /*
  * Targeted preemption latency for CPU-bound tasks:

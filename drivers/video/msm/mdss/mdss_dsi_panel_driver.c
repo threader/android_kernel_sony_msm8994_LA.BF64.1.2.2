@@ -2869,8 +2869,6 @@ static int mdss_dsi_panel_parse_display_timings(struct device_node *np,
 			mdss_dsi_panel_config_res_properties(np,
 				panel_data->panel_info.sim_panel_mode, &pt);
 			rc = mdss_dsi_panel_timing_switch(ctrl, &pt.timing);
-		} else {
-			kfree(pt);
 		}
 		return rc;
 	}

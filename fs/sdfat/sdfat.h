@@ -559,3 +559,4 @@ extern void __sdfat_dmsg(int level, const char *fmt, ...) __printf(2, 3) __cold;
 }
 
 #endif /* !_SDFAT_H */
+

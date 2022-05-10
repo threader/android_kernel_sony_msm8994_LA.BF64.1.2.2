@@ -809,7 +809,6 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
 			goto errout;
 	} else
 		BUFFER_TRACE(bh, "not a new buffer");
-	}
 	return bh;
 errout:
 	brelse(bh);

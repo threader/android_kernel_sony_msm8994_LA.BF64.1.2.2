@@ -174,13 +174,6 @@ static void msm_pcm_routing_cfg_pp(int port_id, int copp_idx, int topology,
 			msm_routing_ahc_set_copp_idx(copp_idx);
 		}
 		break;
-	case ADM_CMD_COPP_OPENOPOLOGY_ID_SPEAKER_STEREO_AUDIO_COPP_SOMC_HP:
-		if (port_id == AHC_PORT_ID) {
-			pr_debug("%s: AHC supporting topology 0x%X\n",
-					__func__, topology);
-			msm_routing_ahc_set_copp_idx(copp_idx);
-		}
-		break;
 	default:
 		/* custom topology specific feature param handlers */
 		break;
@@ -206,13 +199,6 @@ static void msm_pcm_routing_deinit_pp(int port_id, int topology)
 		} else {
 			pr_debug("%s: DOLBY_ADM_COPP_TOPOLOGY_ID\n", __func__);
 			msm_dolby_dap_deinit(port_id);
-		}
-		break;
-	case ADM_CMD_COPP_OPENOPOLOGY_ID_SPEAKER_STEREO_AUDIO_COPP_SOMC_HP:
-		if (port_id == AHC_PORT_ID) {
-			pr_debug("%s: AHC supporting topology 0x%X\n",
-					__func__, topology);
-			msm_routing_ahc_set_copp_idx(-1);
 		}
 		break;
 	case ADM_CMD_COPP_OPENOPOLOGY_ID_SPEAKER_STEREO_AUDIO_COPP_SOMC_HP:

@@ -346,7 +346,7 @@ struct class {
 
 	struct class_attribute		*class_attrs;
 	struct device_attribute		*dev_attrs;	/* use dev_groups instead */
-	const struct attribute_group	**dev_groups;
+	const struct attribute_group	* *dev_groups;
 	struct bin_attribute		*dev_bin_attrs;
 	struct kobject			*dev_kobj;
 

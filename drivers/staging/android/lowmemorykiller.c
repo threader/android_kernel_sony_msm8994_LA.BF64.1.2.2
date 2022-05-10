@@ -42,6 +42,8 @@
 #include <linux/sched.h>
 #include <linux/rcupdate.h>
 #include <linux/notifier.h>
+#include <linux/mutex.h>
+#include <linux/delay.h>
 #include <linux/swap.h>
 #include <linux/fs.h>
 #include <linux/cpuset.h>
@@ -226,6 +228,8 @@ static int test_task_flag(struct task_struct *p, int flag)
 
 	return 0;
 }
+
+static DEFINE_MUTEX(scan_mutex);
 
 int can_use_cma_pages(gfp_t gfp_mask)
 {

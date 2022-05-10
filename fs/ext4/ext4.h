@@ -198,6 +198,8 @@ typedef struct ext4_io_end {
 	unsigned int		flag;		/* unwritten or not */
 	loff_t			offset;		/* offset in the file */
 	ssize_t			size;		/* size of the extent */
+	struct kiocb		*iocb;		/* iocb struct for AIO */
+	int			result;		/* error value for AIO */
 	atomic_t		count;		/* reference counter */
 } ext4_io_end_t;
 

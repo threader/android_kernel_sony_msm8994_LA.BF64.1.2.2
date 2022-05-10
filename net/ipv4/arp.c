@@ -1200,7 +1200,7 @@ static int arp_process(struct sk_buff *skb)
  *	and thus should not be accepted.
  */
 	if (sip == tip && IN_DEV_ORCONF(in_dev, DROP_GRATUITOUS_ARP))
-		goto out;
+		goto out_free_skb;
 
 /*
  *     Special case: We must set Frame Relay source Q.922 address

@@ -267,12 +267,12 @@ typedef struct {
 
 /* FAT32 PBR (64 bytes) */
 typedef struct {
-	bpb16_t bpb;
+	bpb_t bpb;
 } pbr16_t;
 
 /* FAT32 PBR[BPB+BSX] (96 bytes) */
 typedef struct {
-	bpb32_t bpb;
+	bpb_t bpb;
 	bsx32_t bsx;
 } pbr32_t;
 
@@ -286,8 +286,7 @@ typedef struct {
 typedef struct {
 	union {
 		__u8	raw[64];
-		bpb16_t f16;
-		bpb32_t f32;
+		bpb_t	fat;
 		bpb64_t f64;
 	} bpb;
 	union {

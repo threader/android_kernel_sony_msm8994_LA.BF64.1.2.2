@@ -22,11 +22,6 @@ static const struct fib_kuid_range fib_kuid_range_unset = {
 	KUIDT_INIT(~0),
 };
 
-static const struct fib_kuid_range fib_kuid_range_unset = {
-	KUIDT_INIT(0),
-	KUIDT_INIT(~0),
-};
-
 int fib_default_rule_add(struct fib_rules_ops *ops,
 			 u32 pref, u32 table, u32 flags)
 {

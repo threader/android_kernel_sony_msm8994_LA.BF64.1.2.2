@@ -185,7 +185,9 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 	smp_read_barrier_depends(); /* Enforce dependency ordering from x */ \
 	__u.__val;							\
 })
-#define READ_ONCE(x) __READ_ONCE(x, 1)
+#define READ_ONCE(x) \
+	({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
+
 
 /*
  * Use READ_ONCE_NOCHECK() instead of READ_ONCE() if you need

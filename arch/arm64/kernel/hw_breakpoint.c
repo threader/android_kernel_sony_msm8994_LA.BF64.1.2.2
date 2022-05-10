@@ -731,7 +731,7 @@ static int watchpoint_handler(unsigned long addr, unsigned int esr,
 {
 	int i, step = 0, *kernel_step, access, closest_match = 0;
 	u64 min_dist = -1, dist;
-	u32 ctrl_reg;
+	u32 ctrl_reg, lens, lene;
 	u64 val;
 	struct perf_event *wp, **slots;
 	struct debug_info *debug_info;
@@ -749,7 +749,25 @@ static int watchpoint_handler(unsigned long addr, unsigned int esr,
 	for (i = 0; i < core_num_wrps; ++i) {
 		wp = slots[i];
 		if (wp == NULL)
-			continue;
+			goto unlock;
+
+		info = counter_arch_bp(wp);
+
+		/* Check if the watchpoint value and byte select match. */
+		val = read_wb_reg(AARCH64_DBG_REG_WVR, i);
+		ctrl_reg = read_wb_reg(AARCH64_DBG_REG_WCR, i);
+		decode_ctrl_reg(ctrl_reg, &ctrl);
+		lens = ffs(ctrl.len) - 1;
+		lene = fls(ctrl.len) - 1;
+		/*
+		 * FIXME: reported address can be anywhere between "the
+		 * lowest address accessed by the memory access that
+		 * triggered the watchpoint" and "the highest watchpointed
+		 * address accessed by the memory access". So, it may not
+		 * lie in the interval of watchpoint address range.
+		 */
+		if (addr < val + lens || addr > val + lene)
+			goto unlock;
 
 		/*
 		 * Check that the access type matches.
@@ -758,7 +776,7 @@ static int watchpoint_handler(unsigned long addr, unsigned int esr,
 		access = (esr & AARCH64_ESR_ACCESS_MASK) ? HW_BREAKPOINT_W :
 			 HW_BREAKPOINT_R;
 		if (!(access & hw_breakpoint_type(wp)))
-			continue;
+			goto unlock;
 
 		/* Check if the watchpoint value and byte select match. */
 		val = read_wb_reg(AARCH64_DBG_REG_WVR, i);
@@ -792,7 +810,8 @@ static int watchpoint_handler(unsigned long addr, unsigned int esr,
 		if (!wp->overflow_handler)
 			step = 1;
 	}
-	rcu_read_unlock();
+unlock:
+		rcu_read_unlock();
 
 	if (!step)
 		return 0;

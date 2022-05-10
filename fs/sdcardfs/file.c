@@ -76,8 +76,10 @@ static ssize_t sdcardfs_write(struct file *file, const char __user *buf,
 	if (err >= 0) {
 		if (sizeof(loff_t) > sizeof(long))
 			mutex_lock(&inode->i_mutex);
-		fsstack_copy_inode_size(inode, file_inode(lower_file));
-		fsstack_copy_attr_times(inode, file_inode(lower_file));
+		fsstack_copy_inode_size(inode,
+				lower_file->f_path.dentry->d_inode);
+		fsstack_copy_attr_times(inode,
+				lower_file->f_path.dentry->d_inode);
 		if (sizeof(loff_t) > sizeof(long))
 			mutex_unlock(&inode->i_mutex);
 	}
@@ -295,8 +297,10 @@ static int sdcardfs_flush(struct file *file, fl_owner_t id)
 	struct file *lower_file = NULL;
 
 	lower_file = sdcardfs_lower_file(file);
-	if (lower_file && lower_file->f_op && lower_file->f_op->flush)
+	if (lower_file && lower_file->f_op && lower_file->f_op->flush) {
+		filemap_write_and_wait(file->f_mapping);
 		err = lower_file->f_op->flush(lower_file, id);
+	}
 
 	return err;
 }

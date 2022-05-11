@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 /* Copyright (c) 2011-2018 The Linux Foundation. All rights reserved.
-=======
-/* Copyright (c) 2011-2015, 2018 The Linux Foundation. All rights reserved.
->>>>>>> origin/lineage-19.1-imp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -58,11 +54,7 @@ static int32_t msm_actuator_piezo_set_default_focus(
 	CDBG("Enter\n");
 
 	if (a_ctrl->i2c_reg_tbl == NULL) {
-<<<<<<< HEAD
 		pr_err("failed. i2c reg table is NULL");
-=======
-		pr_err("failed. i2c reg tabl is NULL");
->>>>>>> origin/lineage-19.1-imp
 		return -EFAULT;
 	}
 
@@ -545,11 +537,7 @@ static int32_t msm_actuator_piezo_move_focus(
 	}
 
 	if (a_ctrl->i2c_reg_tbl == NULL) {
-<<<<<<< HEAD
 		pr_err("failed. i2c reg table is NULL");
-=======
-		pr_err("failed. i2c reg tabl is NULL");
->>>>>>> origin/lineage-19.1-imp
 		return -EFAULT;
 	}
 
@@ -624,11 +612,7 @@ static int32_t msm_actuator_move_focus(
 		return -EFAULT;
 	}
 	if (a_ctrl->i2c_reg_tbl == NULL) {
-<<<<<<< HEAD
 		pr_err("failed. i2c reg table is NULL");
-=======
-		pr_err("failed. i2c reg tabl is NULL");
->>>>>>> origin/lineage-19.1-imp
 		return -EFAULT;
 	}
 	if (dest_step_pos > a_ctrl->total_steps) {
@@ -734,11 +718,7 @@ static int32_t msm_actuator_bivcm_move_focus(
 		return -EFAULT;
 	}
 	if (a_ctrl->i2c_reg_tbl == NULL) {
-<<<<<<< HEAD
 		pr_err("failed. i2c reg table is NULL");
-=======
-		pr_err("failed. i2c reg tabl is NULL");
->>>>>>> origin/lineage-19.1-imp
 		return -EFAULT;
 	}
 	if (dest_step_pos > a_ctrl->total_steps) {
@@ -1149,16 +1129,12 @@ static int32_t msm_actuator_set_position(
 		return -EFAULT;
 	}
 
-<<<<<<< HEAD
 	if (a_ctrl->i2c_reg_tbl == NULL) {
 		pr_err("failed. i2c reg table is NULL");
 		return -EFAULT;
 	}
 
 	if (a_ctrl->actuator_state != ACT_ENABLE_STATE) {
-=======
-	if (a_ctrl->actuator_state != ACT_OPS_ACTIVE) {
->>>>>>> origin/lineage-19.1-imp
 		pr_err("failed. Invalid actuator state.");
 		return -EFAULT;
 	}

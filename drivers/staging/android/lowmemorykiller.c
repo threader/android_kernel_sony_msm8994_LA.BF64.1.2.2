@@ -61,8 +61,6 @@
 #else
 #define _ZONE ZONE_NORMAL
 #endif
-=======
->>>>>>> origin/lineage-19.1-imp
 
 #define CREATE_TRACE_POINTS
 #include "trace/lowmemorykiller.h"
@@ -116,7 +114,6 @@ static int enable_adaptive_lmk;
 module_param_named(enable_adaptive_lmk, enable_adaptive_lmk, int,
 	S_IRUGO | S_IWUSR);
 
-int adjust_minadj(short *min_score_adj)
 static unsigned long lowmem_count(struct shrinker *s,
 				  struct shrink_control *sc)
 {
@@ -372,16 +369,25 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 	unsigned long rem = 0;
 	int tasksize;
 	int i;
+	int ret = 0;
 	short min_score_adj = OOM_SCORE_ADJ_MAX + 1;
 	int minfree = 0;
 	int selected_tasksize = 0;
 	short selected_oom_score_adj;
 	int array_size = ARRAY_SIZE(lowmem_adj);
-	int other_free = global_page_state(NR_FREE_PAGES) - totalreserve_pages;
-	int other_file = global_page_state(NR_FILE_PAGES) -
-						global_page_state(NR_SHMEM) -
-						global_page_state(NR_UNEVICTABLE) -
-						total_swapcache_pages();
+	int other_free;
+	int other_file;
+	unsigned long nr_to_scan = sc->nr_to_scan;
+
+	other_free = global_page_state(NR_FREE_PAGES);
+
+	other_file = global_page_state(NR_FILE_PAGES) + zcache_pages() -
+		global_page_state(NR_SHMEM) -
+		global_page_state(NR_UNEVICTABLE) -
+		total_swapcache_pages();
+	other_file = (other_file < 0) ? 0 : other_file;
+
+	tune_lmk_param(&other_free, &other_file, sc);
 
 	lmk_inc_stats(LMK_SCAN);
 	if (lowmem_adj_size < array_size)
@@ -391,10 +397,6 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 	for (i = 0; i < array_size; i++) {
 		minfree = lowmem_minfree[i] +
 			  ((extra_free_kbytes * 1024) / PAGE_SIZE);
-#ifdef CONFIG_ANDROID_LOW_MEMORY_KILLER_CONSIDER_SWAP
-		if (max_minfree < minfree)
-			max_minfree = minfree;
-#endif
 		if (other_free < minfree && other_file < minfree) {
 			min_score_adj = lowmem_adj[i];
 			break;

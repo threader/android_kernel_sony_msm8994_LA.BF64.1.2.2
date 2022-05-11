@@ -1576,7 +1576,7 @@ static inline int upmigrate_discouraged(struct task_struct *p)
 static inline int is_big_task(struct task_struct *p)
 {
 	u64 load = task_load(p);
-	int nice = TASK_NICE(p);
+	int nice = task_nice(p);
 
 	if (nice > sched_upmigrate_min_nice || upmigrate_discouraged(p))
 		return 0;
@@ -1763,18 +1763,13 @@ static int task_load_will_fit(struct task_struct *p, u64 task_load, int cpu)
 {
 	struct rq *prev_rq = cpu_rq(task_cpu(p));
 	struct rq *rq = cpu_rq(cpu);
-	int upmigrate, nice;
+	int upmigrate;
 
 	if (rq->capacity == max_capacity)
 		return 1;
 
-	if (sched_boost() && task_sched_boost(p)) {
-		if (rq->capacity > prev_rq->capacity)
-			return 1;
-	} else {
-		nice = TASK_NICE(p);
-		if (nice > sched_upmigrate_min_nice || upmigrate_discouraged(p))
-			return 1;
+	if (task_nice(p) > sched_upmigrate_min_nice || upmigrate_discouraged(p))
+		return 1;
 
 		upmigrate = sched_upmigrate;
 		if (prev_rq->capacity > rq->capacity)
@@ -1782,7 +1777,6 @@ static int task_load_will_fit(struct task_struct *p, u64 task_load, int cpu)
 
 		if (task_load < upmigrate)
 			return 1;
-	}
 
 	return 0;
 }
@@ -2160,8 +2154,6 @@ static int select_best_cpu(struct task_struct *p, int target, int reason,
 		sync = 0;
 	}
 
-	if (boost && task_sched_boost(p))
-		small_task = 0;
 
 	if (small_task && !sync) {
 		best_cpu = best_small_task_cpu(p, sync);
@@ -2878,7 +2870,7 @@ static inline int is_task_migration_throttled(struct task_struct *p);
  */
 static inline int migration_needed(struct rq *rq, struct task_struct *p)
 {
-	int nice = TASK_NICE(p);
+	int nice;
 
 	if (!sched_enable_hmp || p->state != TASK_RUNNING)
 		return 0;
@@ -2887,19 +2879,13 @@ static inline int migration_needed(struct rq *rq, struct task_struct *p)
 	if (task_will_be_throttled(p))
 		return 0;
 
-	if (sched_boost() && task_sched_boost(p)) {
-		if (rq->capacity != max_capacity)
-			return UP_MIGRATION;
-
-		return 0;
-	}
-
 	if (is_small_task(p))
 		return 0;
 
 	if (sched_cpu_high_irqload(cpu_of(rq)))
 		return IRQLOAD_MIGRATION;
 
+	nice = task_nice(p);
 	if ((nice > sched_upmigrate_min_nice || upmigrate_discouraged(p)) &&
 			 rq->capacity > min_capacity)
 		return DOWN_MIGRATION;

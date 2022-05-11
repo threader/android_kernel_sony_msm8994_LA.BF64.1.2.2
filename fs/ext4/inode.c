@@ -770,16 +770,14 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
 	err = ext4_map_blocks(handle, inode, &map,
 			      create ? EXT4_GET_BLOCKS_CREATE : 0);
 
-	/* ensure we send some value back into *errp */
 	if (err == 0)
 		return create ? ERR_PTR(-ENOSPC) : NULL;
 	if (err < 0)
 		return ERR_PTR(err);
 
 	bh = sb_getblk(inode->i_sb, map.m_pblk);
-	if (unlikely(!bh)) {
+	if (unlikely(!bh))
 		return ERR_PTR(-ENOMEM);
-	}
 	if (map.m_flags & EXT4_MAP_NEW) {
 		J_ASSERT(create != 0);
 		J_ASSERT(handle != NULL);
@@ -3176,7 +3174,6 @@ static ssize_t ext4_ext_direct_IO(int rw, struct kiocb *iocb,
 			ret = -ENOMEM;
 			goto retake_lock;
 		}
-		io_end->flag |= EXT4_IO_END_DIRECT;
 		/*
 		 * Grab reference for DIO. Will be dropped in ext4_end_io_dio()
 		 */
@@ -3224,13 +3221,6 @@ static ssize_t ext4_ext_direct_IO(int rw, struct kiocb *iocb,
 		if (ret <= 0 && ret != -EIOCBQUEUED && iocb->private) {
 			WARN_ON(iocb->private != io_end);
 			WARN_ON(io_end->flag & EXT4_IO_END_UNWRITTEN);
-			WARN_ON(io_end->iocb);
-			/*
-			 * Generic code already did inode_dio_done() so we
-			 * have to clear EXT4_IO_END_DIRECT to not do it for
-			 * the second time.
-			 */
-			io_end->flag = 0;
 			ext4_put_io_end(io_end);
 			iocb->private = NULL;
 		}
@@ -3699,8 +3689,8 @@ out_mutex:
 	return ret;
 #else
 	/*
-	* Disabled as per b/28760453
-	*/
+	 * Disabled as per b/28760453
+	 */
 	return -EOPNOTSUPP;
 #endif
 }

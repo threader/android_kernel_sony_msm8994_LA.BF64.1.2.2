@@ -164,8 +164,8 @@ struct smq_msg {
 };
 
 struct smq_invoke_rsp {
-	uint64_t ctx;		/* invoke caller context */
-	int retval;		/* invoke return value */
+	uint64_t ctx;            /* invoke caller context */
+	int retval;	             /* invoke return value */
 };
 
 static inline struct smq_invoke_buf *smq_invoke_buf_start(remote_arg_t *pra,

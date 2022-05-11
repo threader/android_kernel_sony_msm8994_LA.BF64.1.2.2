@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
+=======
+/* Copyright (c) 2012-2015, 2017-2018 The Linux Foundation. All rights reserved.
+>>>>>>> origin/lineage-19.1-imp
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -809,7 +813,11 @@ static void dci_process_ctrl_status(unsigned char *buf, int len, int token)
 	int peripheral_mask, status;
 
 	if (!buf || len < 2 || (len < sizeof(struct diag_ctrl_dci_status))) {
+<<<<<<< HEAD
 		pr_err("diag: In %s, invalid buf %pK or length: %d\n",
+=======
+		pr_err("diag: In %s, invalid buf %p or length: %d\n",
+>>>>>>> origin/lineage-19.1-imp
 		       __func__, buf, len);
 		return;
 	}
@@ -1112,10 +1120,18 @@ void extract_dci_events(unsigned char *buf, int len, int data_source, int token)
 		pr_err("diag: In %s buffer is NULL\n", __func__);
 		return;
 	}
+<<<<<<< HEAD
 	/*
 	 * 1 byte for event code and 2 bytes for the length field.
 	 * The length field indicates the total length removing the cmd_code
 	 * and the lenght field. The event parsing in that case should happen
+=======
+
+	/*
+	 * 1 byte for event code and 2 bytes for the length field.
+	 * The length field indicates the total length removing the cmd_code
+	 * and the length field. The event parsing in that case should happen
+>>>>>>> origin/lineage-19.1-imp
 	 * till the end.
 	 */
 	if (len < 3) {

@@ -143,7 +143,6 @@ static inline int strtobool(const char *s, bool *res)
 {
 	return kstrtobool(s, res);
 }
-
 int match_string(const char * const *array, size_t n, const char *string);
 
 #ifdef CONFIG_BINARY_PRINTF

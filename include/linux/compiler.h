@@ -125,16 +125,24 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
 	}								\
 })
 
-static __always_inline
-void __read_once_size(const volatile void *p, void *res, int size)
-{
-	__READ_ONCE_SIZE;
-}
-
 static __no_sanitize_or_inline
 void __read_once_size_nocheck(const volatile void *p, void *res, int size)
 {
 	__READ_ONCE_SIZE;
+}
+
+static __always_inline void __read_once_size(const volatile void *p, void *res, int size)
+{
+	switch (size) {
+	case 1: *(__u8 *)res = *(volatile __u8 *)p; break;
+	case 2: *(__u16 *)res = *(volatile __u16 *)p; break;
+	case 4: *(__u32 *)res = *(volatile __u32 *)p; break;
+	case 8: *(__u64 *)res = *(volatile __u64 *)p; break;
+	default:
+		barrier();
+		__builtin_memcpy((void *)res, (const void *)p, size);
+		barrier();
+	}
 }
 
 static __always_inline void __write_once_size(volatile void *p, void *res, int size)
@@ -187,7 +195,6 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 })
 #define READ_ONCE(x) \
 	({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
-
 
 /*
  * Use READ_ONCE_NOCHECK() instead of READ_ONCE() if you need

@@ -151,4 +151,5 @@ typedef void (*list_lru_dispose_cb)(struct list_head *dispose_list);
  */
 unsigned long
 list_lru_dispose_all(struct list_lru *lru, list_lru_dispose_cb dispose);
+
 #endif /* _LRU_LIST_H */

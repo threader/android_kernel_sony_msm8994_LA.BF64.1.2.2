@@ -3011,7 +3011,8 @@ static struct buffer_head *ext4_get_first_dir_block(handle_t *handle,
  * higher-level routines.
  */
 static int ext4_rename(struct inode *old_dir, struct dentry *old_dentry,
-		       struct inode *new_dir, struct dentry *new_dentry)
+		       struct inode *new_dir, struct dentry *new_dentry,
+		       unsigned int flags)
 {
 	handle_t *handle;
 	struct inode *old_inode, *new_inode;
@@ -3203,6 +3204,16 @@ end_rename:
 	if (retval == 0 && force_da_alloc)
 		ext4_alloc_da_blocks(old_inode);
 	return retval;
+}
+
+static int ext4_rename2(struct inode *old_dir, struct dentry *old_dentry,
+			struct inode *new_dir, struct dentry *new_dentry,
+			unsigned int flags)
+{
+	if (flags & ~RENAME_NOREPLACE)
+		return -EINVAL;
+
+	return ext4_rename(old_dir, old_dentry, new_dir, new_dentry, 0);
 }
 
 /*

@@ -3607,16 +3607,9 @@ static void binder_transaction(struct binder_proc *proc,
 				goto err_copy_data_failed;
 			}
 			/* Fixup buffer pointer to target proc address space */
-<<<<<<< HEAD
-			bp->buffer = (uintptr_t)sg_bufp +
-				binder_alloc_get_user_buffer_offset(
-						&target_proc->alloc);
-			sg_bufp += ALIGN(bp->length, sizeof(u64));
-=======
 			bp->buffer = (uintptr_t)
 				t->buffer->user_data + sg_buf_offset;
 			sg_buf_offset += ALIGN(bp->length, sizeof(u64));
->>>>>>> 8539b1ea7f63 (BACKPORT: binder: use userspace pointer as base of buffer space)
 
 			num_valid = (buffer_offset - off_start_offset) *
 					sizeof(binder_size_t);
@@ -4617,13 +4610,7 @@ retry:
 
 		trd->data_size = t->buffer->data_size;
 		trd->offsets_size = t->buffer->offsets_size;
-<<<<<<< HEAD
-		trd->data.ptr.buffer = (binder_uintptr_t)
-			((uintptr_t)t->buffer->data +
-			binder_alloc_get_user_buffer_offset(&proc->alloc));
-=======
 		trd->data.ptr.buffer = (uintptr_t)t->buffer->user_data;
->>>>>>> 8539b1ea7f63 (BACKPORT: binder: use userspace pointer as base of buffer space)
 		trd->data.ptr.offsets = trd->data.ptr.buffer +
 					ALIGN(t->buffer->data_size,
 					    sizeof(void *));

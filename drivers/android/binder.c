@@ -82,7 +82,6 @@
 
 #include <asm/cacheflush.h>
 
->>>>>>> 51d8a7eca677 (binder: prevent UAF read in print_binder_transaction_log_entry())
 #include "binder_alloc.h"
 #include "binder_internal.h"
 #include "binder_trace.h"

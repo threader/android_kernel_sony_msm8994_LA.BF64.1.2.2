@@ -74,6 +74,7 @@
 #include <linux/security.h>
 #include <linux/spinlock.h>
 #include <linux/ratelimit.h>
+#include <linux/task_work.h>
 
 #include "binder.h"
 #include <uapi/linux/android/binder.h>

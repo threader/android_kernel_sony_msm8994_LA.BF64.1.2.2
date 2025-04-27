@@ -233,7 +233,6 @@ static struct binder_transaction_log_entry *binder_transaction_log_add(
 	return e;
 }
 
-
 /**
  * struct binder_work - work enqueued on a worklist
  * @entry:             node enqueued on list
@@ -4414,7 +4413,7 @@ retry:
 			e->cmd = BR_OK;
 			ptr += sizeof(uint32_t);
 
-			binder_stat_br(proc, thread, e->cmd);
+			binder_stat_br(proc, thread, cmd);
 		} break;
 		case BINDER_WORK_TRANSACTION_COMPLETE: {
 			binder_inner_proc_unlock(proc);

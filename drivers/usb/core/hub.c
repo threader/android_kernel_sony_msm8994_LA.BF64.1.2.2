@@ -1084,7 +1084,6 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
 		 */
 		if (type == HUB_INIT) {
 			delay = hub_power_on(hub, false);
-<<<<<<< HEAD
 #ifdef CONFIG_USB_OTG
 			if (hdev->bus->is_b_host)
 				goto init2;

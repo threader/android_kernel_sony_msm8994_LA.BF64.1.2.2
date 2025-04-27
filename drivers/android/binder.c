@@ -2491,7 +2491,6 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 	for (buffer_offset = off_start_offset; buffer_offset < off_end_offset;
 	     buffer_offset += sizeof(binder_size_t)) {
 		struct binder_object_header *hdr;
-
 		size_t object_size;
 		struct binder_object object;
 		binder_size_t object_offset;
@@ -2849,7 +2848,7 @@ static int binder_translate_fd_array(struct binder_fd_array_object *fda,
 	}
 	for (fdi = 0; fdi < fda->num_fds; fdi++) {
 		u32 fd;
-		int target_fd;
+
 		binder_size_t offset = fda_offset + fdi * sizeof(fd);
 
 		binder_alloc_copy_from_buffer(&target_proc->alloc,
@@ -2967,10 +2966,11 @@ static int binder_proc_transaction(struct binder_transaction *t,
 
 	if (oneway) {
 		BUG_ON(thread);
-		if (node->has_async_transaction)
+		if (node->has_async_transaction) {
 			pending_async = true;
-		else
+		} else {
 			node->has_async_transaction = true;
+		}
 	}
 
 	binder_inner_proc_lock(proc);
@@ -6540,7 +6540,9 @@ err_init_binder_device_failed:
 err_alloc_device_names_failed:
 	debugfs_remove_recursive(binder_debugfs_dir_entry_root);
 
-	destroy_workqueue(binder_deferred_workqueue);
+
+
+//	destroy_workqueue(binder_deferred_workqueue);
 
 	return ret;
 }

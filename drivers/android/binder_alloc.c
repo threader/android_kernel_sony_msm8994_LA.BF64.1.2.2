@@ -265,8 +265,9 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
 				alloc->pid, page_addr);
 			goto err_alloc_page_failed;
 		}
-		if (WARN_ON(!vma))
-			goto err_page_ptr_cleared;
+/* note  different versions have me confused now */ 
+		//if (WARN_ON(!vma))
+		//	goto err_page_ptr_cleared;
 
 		page->alloc = alloc;
 		INIT_LIST_HEAD(&page->lru);
@@ -988,6 +989,7 @@ void binder_alloc_vma_close(struct binder_alloc *alloc)
  * up pages when the system is under memory pressure.
  */
 enum lru_status binder_alloc_free_page(struct list_head *item,
+				       struct list_lru_one *lru,
 				       spinlock_t *lock,
 				       void *cb_arg)
 {
@@ -1027,7 +1029,6 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
 		zap_page_range(vma, page_addr, PAGE_SIZE, NULL);
 
 		trace_binder_unmap_user_end(alloc, index);
-
 	}
 	up_read(&mm->mmap_sem);
 	mmput(mm);

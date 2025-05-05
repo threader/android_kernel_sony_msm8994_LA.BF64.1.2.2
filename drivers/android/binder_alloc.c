@@ -989,7 +989,6 @@ void binder_alloc_vma_close(struct binder_alloc *alloc)
  * up pages when the system is under memory pressure.
  */
 enum lru_status binder_alloc_free_page(struct list_head *item,
-				       struct list_lru_one *lru,
 				       spinlock_t *lock,
 				       void *cb_arg)
 	__must_hold(lock)
